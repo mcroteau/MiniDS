@@ -12,5 +12,5 @@ A very basic connection pooled datasource.
 | Basic     | 133,384    |
 
 Not as fast as the other guys, but much faster and reliable than a basic 
-data source. 
+data source. The code is so simple, it's ridiculous! Come on 'Papi'!
 
