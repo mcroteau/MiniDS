@@ -9,7 +9,7 @@ A very basic connection pooled datasource.
 | Papi      | 623       |
 | HikariCP  | 271        |
 | ApacheCP  | 329
-| Basic     | 133384    |
+| Basic     | 133,384    |
 
 Not as fast as the other boys, but much faster and reliable than a basic 
 data source. 
