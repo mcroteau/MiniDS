@@ -8,9 +8,9 @@ A very basic connection pooled datasource.
 
 | Who      | millis |
 | ----------- | ----------- |
-| Papi      | 623       |
+| Papi      | 717       |
 | HikariCP  | 271        |
-| ApacheCP  | 329
+| ApacheCP  | 426
 | Basic     | 133,384    |
 
 Not as fast as the other guys, but reliable and basic! 

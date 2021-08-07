@@ -1,32 +1,26 @@
 package dev;
 
-import javax.sql.DataSource;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Logger;
 
-public class Papi implements DataSource {
+public class Papi {
 
-    Logger log = Logger.getLogger("Papi");
+    Logger Log = Logger.getLogger("Papi");
 
     int cc;
 
     Properties props;
-    private final ThreadLocal<List<Object>> threads;
-    List<Object> list;
+    Queue<Object> queue;
 
     public Papi(New config){
-        this.idx = 0;
         this.cc = config.c;
         this.props = config.props;
-        this.threads = ThreadLocal.withInitial(() -> new ArrayList<>(16));
-        this.list = threads.get();
+        this.queue = new LinkedBlockingDeque<>();
         this.make();
     }
 
@@ -38,7 +32,7 @@ public class Papi implements DataSource {
                 executable.run();
             }
             executable.join();
-            log.info("papi ready!");
+            Log.info("papi ready!");
         }catch (InterruptedException ex) {
             ex.printStackTrace();
         }
@@ -47,21 +41,14 @@ public class Papi implements DataSource {
     protected void addConnection() throws InterruptedException {
         Connection connection = createConnection();
         if(connection != null) {
-            idx++;
-            if(idx >= (cc - 1)){
-                idx = 0;
-            }
-            list.add(connection);
+            queue.add(connection);
         }
     }
 
-    int idx;
-
-    @Override
     public Connection getConnection() {
-        if(list.size() > 0) {
+        if(queue.peek() != null) {
             new Executable(this).run();
-            return (Connection) list.remove(idx);
+            return (Connection) queue.poll();
         }
         return getConnection();
     }
@@ -96,13 +83,6 @@ public class Papi implements DataSource {
             }
         }
     }
-
-    public static class PapiException extends SQLException{
-        public PapiException(String message){
-            super(message);
-        }
-    }
-
 
     public static class New {
         int c;
@@ -150,33 +130,14 @@ public class Papi implements DataSource {
         }
     }
 
+    public static class PapiException extends SQLException{
+        public PapiException(String message){
+            super(message);
+        }
+    }
 
-
-
-    @Override
     public Connection getConnection(String username, String password) throws PapiException {
         throw new PapiException("this is a simple implementation, use get connection() no parameters");
     }
-
-    @Override
-    public PrintWriter getLogWriter() throws PapiException { throw new PapiException("do you reall need a log writer."); }
-
-    @Override
-    public void setLogWriter(PrintWriter out) throws PapiException {throw new PapiException("do you really need a log writer."); }
-
-    @Override
-    public void setLoginTimeout(int seconds) throws PapiException {throw new PapiException("you might not need a login timeout"); }
-
-    @Override
-    public int getLoginTimeout() throws PapiException { throw new PapiException("nah, we don't think you need this.");}
-
-    @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException { throw new SQLFeatureNotSupportedException("no parent logger here."); }
-
-    @Override
-    public <T> T unwrap(Class<T> iface) throws PapiException { throw new PapiException("bare essentials only."); }
-
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws PapiException { throw new PapiException("bare essentials only."); }
 
 }
