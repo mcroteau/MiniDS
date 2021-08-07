@@ -77,7 +77,7 @@ public class BasicDataSource implements DataSource {
 
             Class.forName("org.h2.Driver");
 
-            Connection connection = DriverManager.getConnection("jdbc:h2:~/.miniDS-basic", "sa", "");
+            Connection connection = DriverManager.getConnection("jdbc:h2:~/.papi-basic", "sa", "");
             connection.setAutoCommit(false);
 
             this.connection = connection;

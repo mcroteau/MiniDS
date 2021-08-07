@@ -3,6 +3,9 @@ package dev;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.dbcp2.*;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.h2.tools.RunScript;
 
 import java.io.File;
@@ -14,6 +17,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 public class Runner {
@@ -24,25 +28,44 @@ public class Runner {
         Path uri = Paths.get("src", "main", "resources", "create-db.sql");
         File createFile = new File(uri.toAbsolutePath().toString());
 
-//        BasicDataSource dataSource = new BasicDataSource.Builder().build();
+//        BasicDataSource datasource = new BasicDataSource.Builder().build();
 
-//        MiniDS datasource = new MiniDS.Builder()
-//                .withConnections(159)
-//                .withDriver("org.h2.Driver")
-//                .withUrl("jdbc:h2:~/.miniDS")
-//                .withUser("sa")
-//                .withPassword("")
-//                .make();
 
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:~/.miniDs");
-        config.setUsername("sa");
-        config.setPassword("");
-        config.setMaximumPoolSize(159);
-        config.setAutoCommit(false);
-        config.setDriverClassName("org.h2.Driver");
-        HikariDataSource datasource = new HikariDataSource(config);
+        Papi datasource = new Papi.New()
+                                .connections(159)
+                                .driver("org.h2.Driver")
+                                .url("jdbc:h2:~/.papi")
+                                .user("sa")
+                                .password("")
+                                .make();
 
+//        HikariConfig config = new HikariConfig();
+//        config.setJdbcUrl("jdbc:h2:~/.papi");
+//        config.setUsername("sa");
+//        config.setPassword("");
+//        config.setMaximumPoolSize(159);
+//        config.setAutoCommit(false);
+//        config.setDriverClassName("org.h2.Driver");
+//        HikariDataSource datasource = new HikariDataSource(config);
+
+//        Properties props = new Properties();
+//        props.setProperty("driverClassName", "org.h2.Driver");
+//        props.setProperty("user", "sa");
+//        props.setProperty("password", "");
+//
+//        ConnectionFactory connectionFactory =
+//                new DriverManagerConnectionFactory("jdbc:h2:~/.papi",props);
+//
+//        PoolableConnectionFactory poolableConnectionFactory =
+//                new PoolableConnectionFactory(connectionFactory, null);
+//
+//
+//        ObjectPool<PoolableConnection> connectionPool =
+//                new GenericObjectPool<>(poolableConnectionFactory);
+//
+//        poolableConnectionFactory.setPool(connectionPool);
+//        PoolingDataSource<PoolableConnection> datasource =
+//                new PoolingDataSource<>(connectionPool);
 
         Connection conn = datasource.getConnection();
         RunScript.execute(conn, new FileReader(createFile));
@@ -58,8 +81,18 @@ public class Runner {
                 Connection connection = datasource.getConnection();
                 Statement stmt = connection.createStatement();
                 stmt.execute(sql);
+
+//                Connection connection = datasource.getConnection();
+//                String sql = "select count(*) from todos";
+//                Statement stmt = connection.createStatement();
+//                ResultSet rs = stmt.executeQuery(sql);
+//                if(rs.next()){
+//                     Long.parseLong(rs.getObject(1).toString());
+//                }
+
                 connection.commit();
                 connection.close();
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -73,7 +106,7 @@ public class Runner {
 
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            String dbPath = System.getProperty("user.home") + File.separator + ".miniDS";
+            String dbPath = System.getProperty("user.home") + File.separator + ".papi";
             File dbMvFile = new File(dbPath + ".mv.db");
             if (dbMvFile.exists()) {
                 dbMvFile.delete();
