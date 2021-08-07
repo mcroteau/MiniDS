@@ -2,6 +2,8 @@
 
 A very basic connection pooled datasource.
 
+### 1000 inserts
+
 | Who      | millis |
 | ----------- | ----------- |
 | Papi      | 623       |
