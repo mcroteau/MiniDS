@@ -163,3 +163,18 @@ public class Papi {
 }
 ```
 
+### Then to initialize
+
+```
+Papi datasource = new Papi.New()
+        .connections(numberOfConnections)
+        .driver("org.h2.Driver")
+        .url("jdbc:h2:~/.papi")
+        .user("sa")
+        .password("")
+        .make();
+
+Connection connection = datasource.createConnection();
+
+```
+
