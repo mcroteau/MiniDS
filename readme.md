@@ -11,6 +11,6 @@ A very basic connection pooled datasource.
 | ApacheCP  | 329
 | Basic     | 133,384    |
 
-Not as fast as the other guys, but much faster and reliable than a basic 
-data source. The code is so simple, it's ridiculous! Come on 'Papi'!
+Not as fast as the other guys, but reliable and basic! 
+The code is simple, it's ridiculous! Come on 'Papi'!
 
