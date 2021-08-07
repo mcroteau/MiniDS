@@ -16,7 +16,19 @@ A very basic connection pooled datasource.
 Not as fast as the other guys, but reliable and basic! 
 The code is simple, it's ridiculous! Come on 'Papi'!
 
-#### Copy Code
+### To initialize
+
+```
+Papi datasource = new Papi.New()
+        .connections(numberOfConnections)
+        .driver("org.h2.Driver")
+        .url("jdbc:h2:~/.papi")
+        .user("sa")
+        .password("")
+        .make();
+```
+
+#### Wait, you need Papi
 
 ```
 
@@ -149,32 +161,7 @@ public class Papi {
             return new Papi(this);
         }
     }
-
-    public static class PapiException extends SQLException{
-        public PapiException(String message){
-            super(message);
-        }
-    }
-
-    public Connection getConnection(String username, String password) throws PapiException {
-        throw new PapiException("this is a simple implementation, use get connection() no parameters");
-    }
-
 }
 ```
 
-### Then to initialize
-
-```
-Papi datasource = new Papi.New()
-        .connections(numberOfConnections)
-        .driver("org.h2.Driver")
-        .url("jdbc:h2:~/.papi")
-        .user("sa")
-        .password("")
-        .make();
-
-Connection connection = datasource.createConnection();
-
-```
 
