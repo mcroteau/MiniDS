@@ -1,4 +1,4 @@
-<img src="https://png.pngtree.com/element_our/20200630/ourlarge/pngtree-old-man-vector-icon-material-image_2275474.jpg" style="width:290px;"/>
+<img src="https://png.pngtree.com/element_our/20200630/ourlarge/pngtree-old-man-vector-icon-material-image_2275474.jpg" style="width:90px !important;"/>
 
 # Papi
 
