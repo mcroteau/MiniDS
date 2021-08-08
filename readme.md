@@ -31,6 +31,7 @@ Papi datasource = new Papi.New()
 #### Wait, you need Papi
 
 ```
+
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -114,16 +115,6 @@ public class Papi implements DataSource {
         return connection;
     }
 
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return false;
-    }
-
     public static class Executable extends Thread {
 
         Papi papi;
@@ -188,7 +179,7 @@ public class Papi implements DataSource {
         }
     }
 
-    public static class PapiException extends SQLException{
+    public static class PapiException extends SQLException {
         public PapiException(String message){
             super(message);
         }
@@ -224,6 +215,16 @@ public class Papi implements DataSource {
         throw new SQLFeatureNotSupportedException("parent logger, what? just papi");
     }
 
+    @Override
+    public <T> T unwrap(Class<T> iface) throws PapiException {
+        throw new PapiException("no wrapper.");
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws PapiException {
+        throw new PapiException("no wrapper.");
+    }
+    
 }
 ```
 
