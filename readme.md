@@ -31,23 +31,25 @@ Papi datasource = new Papi.New()
 #### Wait, you need Papi
 
 ```
-
+import javax.sql.DataSource;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Logger;
 
-public class Papi {
+public class Papi implements DataSource {
 
     Logger Log = Logger.getLogger("Papi");
 
     int cc;
 
     Properties props;
-    Queue<Object> queue;
+    Queue<Connection> queue;
 
     public Papi(New config){
         this.cc = config.c;
@@ -65,9 +67,23 @@ public class Papi {
             }
             executable.join();
             Log.info("papi ready!");
+            setupShutdown();
         }catch (InterruptedException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void setupShutdown(){
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Log.info("papi clean!");
+                for(Connection connection : queue){
+                    connection.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }));
     }
 
     protected void addConnection() throws InterruptedException {
@@ -96,6 +112,16 @@ public class Papi {
             throw new RuntimeException("Problem connecting to the database", ex);
         }
         return connection;
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
     }
 
     public static class Executable extends Thread {
@@ -161,6 +187,43 @@ public class Papi {
             return new Papi(this);
         }
     }
+
+    public static class PapiException extends SQLException{
+        public PapiException(String message){
+            super(message);
+        }
+    }
+
+    public Connection getConnection(String username, String password) throws PapiException {
+        throw new PapiException("this is a simple implementation, use get connection() no parameters");
+    }
+
+
+    @Override
+    public PrintWriter getLogWriter() throws SQLException {
+        throw new PapiException("no log writer here... just papi");
+    }
+
+    @Override
+    public void setLogWriter(PrintWriter out) throws SQLException {
+        throw new PapiException("no log writer here... just papi");
+    }
+
+    @Override
+    public void setLoginTimeout(int seconds) throws SQLException {
+        throw new PapiException("no login timeout... just papi");
+    }
+
+    @Override
+    public int getLoginTimeout() throws SQLException {
+        throw new PapiException("no login timeout... just papi");
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException("parent logger, what? just papi");
+    }
+
 }
 ```
 
